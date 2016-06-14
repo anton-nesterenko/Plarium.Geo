@@ -5,9 +5,9 @@
     using System.Net;
     using System.Text;
 
-    public class SubnetHelper
+    internal class IPNetwork
     {
-        private static SubnetHelper _default;
+        private static IPNetwork _default;
 
         public string IP { get; private set; }
 
@@ -25,15 +25,15 @@
         //public string NumberOfSubnets { get; private set; }
         //public string NumberOfHosts { get; private set; }
 
-        private SubnetHelper()
+        private IPNetwork()
         {
         }
 
-        public static SubnetHelper Default
+        public static IPNetwork Default
         {
             get
             {
-                return _default ?? (_default = new SubnetHelper());
+                return _default ?? (_default = new IPNetwork());
             }
         }
 

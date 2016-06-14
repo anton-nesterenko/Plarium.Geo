@@ -34,19 +34,24 @@
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GeoClient.cs" />
     <Compile Include="GeoUpdater.cs" />
     <Compile Include="Helpers\CountryHelper.cs" />
-    <Compile Include="Helpers\IPAddressHelper.cs" />
-    <Compile Include="Helpers\SubnetHelper.cs" />
-    <Compile Include="Helpers\TimeZoneHelper.cs" />
+    <Compile Include="Helpers\IPAddressTools.cs" />
+    <Compile Include="Helpers\IPNetwork.cs" />
+    <Compile Include="Helpers\TimezoneHelper.cs" />
     <Compile Include="Helpers\WebHelper.cs" />
-    <Compile Include="IGeoClient.cs" />
+    <Compile Include="Services\CountryService.cs" />
+    <Compile Include="Services\ICountryService.cs" />
+    <Compile Include="Services\IGeoService.cs" />
     <Compile Include="IGeoSource.cs" />
     <Compile Include="MemoryGeoSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ITimezoneService.cs" />
+    <Compile Include="Services\TimezoneService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

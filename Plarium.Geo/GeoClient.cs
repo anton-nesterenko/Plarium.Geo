@@ -1,35 +1,48 @@
 ﻿namespace Plarium.Geo
 {
+    using System.Net;
     using Helpers;
+    using Services;
 
-    public class GeoClient : IGeoClient
+    public class GeoService : IGeoService
     {
         private readonly IGeoSource _source;
 
-        public GeoClient(IGeoSource source)
+        public GeoService(IGeoSource source)
         {
             _source = source;
         }
 
         public string ResolveCountry(string ip)
         {
-            return _source.GetCountry(ip);
+            IPAddress address;
+            if (IPAddressTools.TryParse(ip, out address))
+            {
+                return _source.GetCountry(address);
+            }
+
+            return CountryHelper.UnknownCountryCode;
         }
 
-        public string ResolveTimezone(string ip, string format = "GMT{0}:00")
+        public string ResolveTimezone(string ip, string format = "GMT{0}")
         {
-            var address = IPAddressHelper.ToUInt32(ip);
-            var timezone = _source.GetTimezone(address);
-            string utc;
+            IPAddress address;
+            if (!IPAddressTools.TryParse(ip, out address))
+            {
+                return string.Format(format, TimezoneService.DefaultOffset);
+            }
 
+            string utc;
+            var timezone = _source.GetTimezone(address);
+            
             if (string.IsNullOrEmpty(timezone))
             {
                 var countryCode = _source.GetCountry(address);
-                utc = TimeZoneHelper.Default.GetUtcOffsetByCountry(countryCode);
+                utc = TimezoneHelper.Default.GetUtcOffsetByCountry(countryCode);
             }
             else
             {
-                utc = TimeZoneHelper.Default.GetUtcOffsetByTimezone(timezone);
+                utc = TimezoneHelper.Default.GetUtcOffsetByTimezone(timezone);
             }
 
             return string.Format(format, utc);
@@ -42,8 +55,14 @@
 
         public string ResolveDialCodeByIP(string ip)
         {
-            var countryCode = _source.GetCountry(ip);
-            return CountryHelper.Default.GetDialCode(countryCode);
+            IPAddress address;
+            if (IPAddressTools.TryParse(ip, out address))
+            {
+                var countryCode = _source.GetCountry(address);
+                return CountryHelper.Default.GetDialCode(countryCode);
+            }
+
+            return CountryHelper.UnknownDialCode;
         }
 
     }
