@@ -13,14 +13,17 @@ Usage
 -------
 
 * updater usage
+```csharp
 GeoUpdater.DefaultUpdate();
+```
 
 * client usage
+```csharp
 var service = new GeoService();
 service.ResolveCountry(ipAddress);
 service.ResolveDialCodeByIP(ipAddress);
 service.ResolveTimezone(ipAddress);
-
+```
 
 History
 -------
