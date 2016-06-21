@@ -1,147 +1,215 @@
 ﻿namespace Plarium.Geo.Helpers
 {
     using System;
-    using System.Linq;
     using System.Net;
+    using System.Net.Sockets;
     using System.Text;
+
+    /*
+     * https://github.com/lduchosal/ipnetwork/blob/master/solution/System.Net.IPNetwork/IPNetwork.cs
+     * http://www.codeproject.com/Articles/1082101/IP-Geolocation-and-CIDR-Range-Parsing-in-Csharp
+     * https://en.wikipedia.org/wiki/Martian_packet
+     * https://en.wikipedia.org/wiki/Reserved_IP_addresses
+     * https://en.wikipedia.org/wiki/Localhost
+     * https://en.wikipedia.org/wiki/Link-local_address
+     * https://en.wikipedia.org/wiki/Private_network
+     */
 
     internal class IPNetwork
     {
-        private static IPNetwork _default;
+        private byte[] _ipBytes;
+        private byte[] _broadcastBytes;
+        private byte[] _netmaskBytes;
+        private byte[] _networkBytes;
+        private byte[] _firstBytes;
+        private byte[] _lastBytes;
 
-        public string IP { get; private set; }
+        private AddressFamily _family;
 
-        public string Netmask { get; private set; }
-
-        //public string NetmaskBinary { get; private set; }
-        public string NetworkAddress { get; private set; }
-
-        public string FirstUsable { get; private set; }
-
-        public string LastUsable { get; private set; }
-
-        public string Broadcast { get; private set; }
-
-        //public string NumberOfSubnets { get; private set; }
-        //public string NumberOfHosts { get; private set; }
-
-        private IPNetwork()
-        {
-        }
-
-        public static IPNetwork Default
+        public AddressFamily AddressFamily
         {
             get
             {
-                return _default ?? (_default = new IPNetwork());
+                return _family;
             }
         }
 
-        public void Calculate(string ip, string cidr)
+        public string IP
         {
-            this.IP = ip;
-            this.CalculateNetmask(cidr);
-            this.CalculateNetworkAddress();
-            this.CalculateBroadcastAddress();
-            this.CalculateFirstUsableAddress();
-            this.CalculateLastUsableAddress();
-            //CalculateHosts(cidr);
-            //CalculateSubnets(cidr);
-            //CalculateBinaryNetmask();
+            get
+            {
+                return string.Join(".", _ipBytes);
+            }
         }
 
-        /*
-        private void CalculateSubnets(string cidr)
+        public string Netmask
         {
-            int cidrAsInt = int.Parse(cidr);
-            int borrowedBits = 0;
-            if (cidrAsInt >= 24)
-                borrowedBits = cidrAsInt - 24;
-            else if (cidrAsInt >= 16 && cidrAsInt < 24)
-                borrowedBits = cidrAsInt - 16;
-            else if (cidrAsInt >= 8 && cidrAsInt < 16)
-                borrowedBits = cidrAsInt - 8;
-            else if (cidrAsInt >= 0 && cidrAsInt < 8)
-                borrowedBits = cidrAsInt;
+            get
+            {
+                return string.Join(".", _netmaskBytes);
+            }
+        }
 
-            this.NumberOfSubnets = Math.Pow(2, borrowedBits).ToString();
-        }*/
-        /*
-        private void CalculateHosts(string cidr)
+        public string NetworkAddress
         {
-            int cidrAsInt = int.Parse(cidr);
-            this.NumberOfHosts = (Math.Pow(2, (32 - cidrAsInt)) - 2).ToString();
-        }*/
+            get
+            {
+                return string.Join(".", _networkBytes);
+            }
+        }
+
+        public string FirstUsable
+        {
+            get
+            {
+                return string.Join(".", _firstBytes);
+            }
+        }
+
+        public string LastUsable
+        {
+            get
+            {
+                return string.Join(".", _lastBytes);
+            }
+        }
+
+        public string Broadcast
+        {
+            get
+            {
+                return string.Join(".", _broadcastBytes);
+            }
+        }
+
+
+        public string[] _ipv4Martians = new string[]
+                                                   {
+                                                     "0.0.0.0/8",
+                                                     "10.0.0.0/8",
+                                                     "100.64.0.0/10",
+                                                     "127.0.0.0/8",
+                                                     "127.0.53.53",
+                                                     /*"169.254.0.0/16",
+                                                     "172.16.0.0/12",
+                                                     "192.0.0.0/24",
+                                                     "192.0.2.0/24",
+                                                     "192.168.0.0/16",
+                                                     "198.18.0.0/15",
+                                                     "198.51.100.0/24",
+                                                     "203.0.113.0/24",
+                                                     "224.0.0.0/4",
+                                                     "240.0.0.0/4",
+                                                     "255.255.255.255/32"*/
+                                                   };
+        public string[] _ipv6Martians = new string[]
+                                                   {
+                                                     "::/128",
+                                                     "::1/128",
+                                                     //"::ffff:0:0/96",
+                                                     //"::/96",
+                                                     "100::/64",
+                                                     "2001:10::/28",
+                                                     "2001:db8::/32",
+                                                     "fc00::/7",
+                                                     "fe80::/10",
+                                                     "fec0::/10",
+                                                     "ff00::/8"
+                                                   };
+
+        private IPNetwork()
+        {
+
+
+        }
+
+        public static IPNetwork Parse(string ip, string cidr = null)
+        {
+            if (cidr == null)
+            {
+                var net = ip.Split('/');
+                if (net.Length == 2)
+                {
+                    ip = net[0];
+                    cidr = net[1];
+                }
+                else
+                {
+                    cidr = "255";
+                }
+            }
+
+            return new IPNetwork().InternalParse(ip, cidr);
+        }
+
+        private IPNetwork InternalParse(string ip, string cidr)
+        {
+            _ipBytes = IPAddress.Parse(ip).GetAddressBytes();
+
+            CalculateNetmask(cidr);
+            CalculateNetworkAddress();
+            CalculateBroadcastAddress();
+            CalculateFirstUsableAddress();
+            CalculateLastUsableAddress();
+
+            return this;
+        }
 
         private void CalculateLastUsableAddress()
         {
-            byte[] broadcastBytes = IPAddress.Parse(this.Broadcast).GetAddressBytes();
-            broadcastBytes[3]--;
-            this.LastUsable = new IPAddress(broadcastBytes).ToString();
+            _lastBytes = _broadcastBytes;
+            _lastBytes[3]--;
         }
 
         private void CalculateFirstUsableAddress()
         {
-            byte[] networkBytes = IPAddress.Parse(this.NetworkAddress).GetAddressBytes();
-            networkBytes[3]++;
-            this.FirstUsable = new IPAddress(networkBytes).ToString();
+            _firstBytes = _networkBytes;
+            _firstBytes[3]++;
         }
 
         private void CalculateBroadcastAddress()
         {
-            byte[] ipBytes = IPAddress.Parse(this.IP).GetAddressBytes();
-            byte[] netmaskBytes = IPAddress.Parse(this.Netmask).GetAddressBytes();
-            byte[] broadcastBytes = new byte[ipBytes.Length];
+            _broadcastBytes = new byte[_ipBytes.Length];
 
-            for (int i = 0; i < broadcastBytes.Length; i++) broadcastBytes[i] = (byte)(ipBytes[i] | (netmaskBytes[i] ^ 255));
-
-            this.Broadcast = new IPAddress(broadcastBytes).ToString();
+            for (int i = 0; i < _broadcastBytes.Length; i++)
+            {
+                _broadcastBytes[i] = (byte)(_ipBytes[i] | (_netmaskBytes[i] ^ 255));
+            }
         }
 
         private void CalculateNetworkAddress()
         {
-            byte[] ipBytes = IPAddress.Parse(this.IP).GetAddressBytes();
-            byte[] netmaskBytes = IPAddress.Parse(this.Netmask).GetAddressBytes();
-            byte[] networkBytes = new byte[ipBytes.Length];
+            _networkBytes = new byte[_ipBytes.Length];
 
-            for (int i = 0; i < networkBytes.Length; i++) networkBytes[i] = (byte)(ipBytes[i] & (netmaskBytes[i]));
-
-            this.NetworkAddress = new IPAddress(networkBytes).ToString();
+            for (int i = 0; i < _networkBytes.Length; i++)
+            {
+                _networkBytes[i] = (byte)(_ipBytes[i] & (_netmaskBytes[i]));
+            }
         }
 
         private void CalculateNetmask(string cidr)
         {
             uint mask = ~(0xFFFFFFFF >> int.Parse(cidr));
             byte[] bytes = BitConverter.GetBytes(mask);
-            this.Netmask = string.Join(".", bytes.Reverse());
-        }
 
-        /*
-        private void CalculateBinaryNetmask()
-        {
-            byte[] tempMask = IPAddress.Parse(this.Netmask).GetAddressBytes();
-            StringBuilder netmask = new StringBuilder();
-
-            for (int i = 0; i < tempMask.Length; i++)
+            if (BitConverter.IsLittleEndian)
             {
-                netmask.Append(Convert.ToString(tempMask[i], 2).PadLeft(8, '0'));
-                netmask.Append(".");
+                Array.Reverse(bytes, 0, bytes.Length);
             }
-            netmask.Remove(netmask.Length - 1, 1);
-            this.NetmaskBinary = netmask.ToString();
-        }*/
+
+            _netmaskBytes = bytes;
+        }
 
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine("IP:" + this.IP);
-            builder.AppendLine("Netmask:" + this.Netmask);
-            builder.AppendLine("NetworkAddress:" + this.NetworkAddress);
-            builder.AppendLine("FirstUsable:" + this.FirstUsable);
-            builder.AppendLine("LastUsable:" + this.LastUsable);
-            builder.AppendLine("Broadcast:" + this.Broadcast);
-            //builder.AppendLine("NumberOfSubnets:" + NumberOfSubnets);
-            //builder.AppendLine("NumberOfHosts:" + NumberOfHosts);
+            builder.AppendLine("IP:" + IP);
+            builder.AppendLine("Netmask:" + Netmask);
+            builder.AppendLine("NetworkAddress:" + NetworkAddress);
+            builder.AppendLine("FirstUsable:" + FirstUsable);
+            builder.AppendLine("LastUsable:" + LastUsable);
+            builder.AppendLine("Broadcast:" + Broadcast);
+
             return builder.ToString();
         }
     }

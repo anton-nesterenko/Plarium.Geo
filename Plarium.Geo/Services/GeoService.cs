@@ -1,12 +1,16 @@
-﻿namespace Plarium.Geo
+﻿namespace Plarium.Geo.Services
 {
     using System.Net;
-    using Helpers;
-    using Services;
+    using Plarium.Geo.Helpers;
 
     public class GeoService : IGeoService
     {
         private readonly IGeoSource _source;
+
+        public GeoService() : this(new MemoryGeoSource(GeoUpdater.DefaultDbName))
+        {
+
+        }
 
         public GeoService(IGeoSource source)
         {
@@ -34,7 +38,7 @@
 
             string utc;
             var timezone = _source.GetTimezone(address);
-            
+
             if (string.IsNullOrEmpty(timezone))
             {
                 var countryCode = _source.GetCountry(address);

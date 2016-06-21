@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Net;
-
     using Helpers;
 
     public class MemoryGeoSource : IGeoSource
@@ -14,8 +13,8 @@
 
         public MemoryGeoSource(string dbPath)
         {
-            _listIPv4 = new SortedList<uint, byte>(3000000);
-            _listIPv6 = new SortedList<ulong, byte>(300);
+            _listIPv4 = new SortedList<uint, byte> (4000000);
+            _listIPv6 = new SortedList<ulong, byte>(1200000);
             LoadToMemory(dbPath);
         }
 
@@ -36,20 +35,46 @@
 
         private void LoadToMemory(string dbPath)
         {
-            var ipBytes = new byte[4];
+            var ipv4Bytes = new byte[4];
+            var ipv6Bytes = new byte[8];
             using(var stream = File.Open(dbPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (var reader = new BinaryReader(stream))
             {
+                //check header for ipv6
+                bool ipv6Exists = reader.ReadByte() == byte.MaxValue;
+                int ipv6Address = 0;
+                if (ipv6Exists)
+                {
+                    //read header
+                    ipv6Address = reader.ReadInt32();
+                }
+
+                //read ipv4
                 int pos = 0;
                 int length = (int)reader.BaseStream.Length;
-
-                while (pos < length)
+                int ipv4MaxLength = ipv6Exists ? ipv6Address : length;
+                while (pos < ipv4MaxLength)
                 {
-                    ipBytes = reader.ReadBytes(ipBytes.Length);
+                    ipv4Bytes = reader.ReadBytes(ipv4Bytes.Length);
 
-                    _listIPv4.Add(BitConverter.ToUInt32(ipBytes, 0), reader.ReadByte());
+                    _listIPv4.Add(BitConverter.ToUInt32(ipv4Bytes, 0), reader.ReadByte());
 
-                    pos += ipBytes.Length + 1;
+                    pos += ipv4Bytes.Length + 1;
+                }
+
+                //read ipv6
+                if (ipv6Exists)
+                {
+                    pos = ipv4MaxLength;
+                    reader.BaseStream.Position = ipv4MaxLength;
+                    while (pos < length)
+                    {
+                        ipv6Bytes = reader.ReadBytes(ipv6Bytes.Length);
+
+                        _listIPv6.Add(BitConverter.ToUInt64(ipv6Bytes, 0), reader.ReadByte());
+
+                        pos += ipv6Bytes.Length + 1;
+                    }
                 }
 
                 stream.Close();
@@ -59,8 +84,51 @@
 
         private byte FindIPv6(ulong value)
         {
-            //TODO: non implemented
-            return byte.MinValue;
+            int ndx = 0;
+            foreach (var b in _listIPv6)
+            {
+                ndx++;
+                if (b.Key >= value)
+                {
+                    return _listIPv6.Values[ndx];
+                }
+            }
+
+            int lower = 0;
+            int length = _listIPv6.Count;
+            int upper = length - 1;
+            int index = (lower + upper) / 2;
+
+            while (lower <= upper)
+            {
+                var result = value.CompareTo(_listIPv6.Keys[index]);
+                if (result == 0)
+                {
+                    return _listIPv6.Values[index];
+                }
+
+                if (result < 0)
+                {
+                    upper = index - 1;
+                }
+                else
+                {
+                    lower = index + 1;
+                }
+                index = (lower + upper) / 2;
+            }
+
+            if (index >= length - 1)
+            {
+                return value > _listIPv6.Keys[length - 1] ? _listIPv6.Values[0] : _listIPv6.Values[length - 1];
+            }
+
+            if (index <= 0)
+            {
+                return _listIPv6.Values[0];
+            }
+
+            return _listIPv6.Values[index];
         }
 
         private byte FindIPv4(uint value)

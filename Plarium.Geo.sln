@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25402.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plarium.Geo", "Plarium.Geo\Plarium.Geo.csproj", "{DB521053-3856-42A9-B6AE-B02D71BFC5AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plarium.Geo.Console", "Plarium.Geo.Console\Plarium.Geo.Console.csproj", "{BFBE9482-00C6-4A1D-AF8B-7A24A42EE5A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{DB521053-3856-42A9-B6AE-B02D71BFC5AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB521053-3856-42A9-B6AE-B02D71BFC5AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB521053-3856-42A9-B6AE-B02D71BFC5AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFBE9482-00C6-4A1D-AF8B-7A24A42EE5A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFBE9482-00C6-4A1D-AF8B-7A24A42EE5A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFBE9482-00C6-4A1D-AF8B-7A24A42EE5A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFBE9482-00C6-4A1D-AF8B-7A24A42EE5A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
