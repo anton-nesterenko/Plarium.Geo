@@ -6,24 +6,53 @@ Lightweight GeoIP library to determine the country, dial-code, timezone associat
 Installation
 -------
 
-TODO: Describe the installation process
+## To install Plarium.Geo, run the following command in the Nuget Package Manager Console
+
+    PM> Install-Package Plarium.Geo
+
+## To install Plarium.Geo.Embedded, run the following command in the Nuget Package Manager Console
+
+    PM> Install-Package Plarium.Geo.Embedded
 
 
-Usage
+Usage Plarium.Geo
 -------
 
-* updater usage
+* You can update database file manually at any time
 ```csharp
-GeoUpdater.DefaultUpdate();
+// using default settings
+GeoUpdater.Update();
+// forced update
+GeoUpdater.Update(mode: GeoUpdater.UpdateMode.Lite, force: true);
 ```
 
-* client usage
+* Example of update of GeoService with database file:
 ```csharp
-var service = new GeoService();
+GeoUpdater.Update();
+var builder = new GeoServiceBuilder();
+var service = new GeoService(builder);
+
+var ipAddress = "2607:f0d0:1002:51::4";
+
 service.ResolveCountry(ipAddress);
 service.ResolveDialCodeByIP(ipAddress);
 service.ResolveTimezone(ipAddress);
 ```
+
+Usage Plarium.Geo.Embedded
+-------
+
+* Example of update of GeoService with embedded resources:
+```csharp
+var builder = new GeoServiceBuilder();
+builder.RegisterResource<EmbeddedResourceReader>();
+var service = new GeoService(builder);
+
+var ipAddress = "2607:f0d0:1002:51::4";
+
+service.ResolveCountry(ipAddress);
+service.ResolveDialCodeByIP(ipAddress);
+service.ResolveTimezone(ipAddress);
 
 History
 -------
@@ -38,7 +67,7 @@ TODO: Write Code Status
 License
 -------
 
-The following source/framework has been applied with the [MIT license](https://github.com/anton-nesterenko/Plarium.Geo/blob/master/LICENSE)
+The following source/framework has been applied with the [MIT license](https://github.com/anton-nesterenko/Plarium.Geo/LICENSE)
 
 
 
