@@ -6,16 +6,16 @@ Lightweight GeoIP library to determine the country, dial-code, timezone associat
 Installation
 -------
 
-## To install Plarium.Geo, run the following command in the Nuget Package Manager Console
+# Installation Plarium.Geo from Nuget Console
 
     PM> Install-Package Plarium.Geo
 
-## To install Plarium.Geo.Embedded, run the following command in the Nuget Package Manager Console
+# Installation Plarium.Geo.Embedded from Nuget Console
 
     PM> Install-Package Plarium.Geo.Embedded
 
 
-Usage Plarium.Geo
+Usage of Plarium.Geo
 -------
 
 * You can update database file manually at any time
@@ -39,7 +39,7 @@ service.ResolveDialCodeByIP(ipAddress);
 service.ResolveTimezone(ipAddress);
 ```
 
-Usage Plarium.Geo.Embedded
+Usage of Plarium.Geo.Embedded
 -------
 
 * Example of update of GeoService with embedded resources:
@@ -53,6 +53,7 @@ var ipAddress = "2607:f0d0:1002:51::4";
 service.ResolveCountry(ipAddress);
 service.ResolveDialCodeByIP(ipAddress);
 service.ResolveTimezone(ipAddress);
+```
 
 History
 -------
