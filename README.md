@@ -26,7 +26,7 @@ GeoUpdater.Update();
 GeoUpdater.Update(mode: GeoUpdater.UpdateMode.Lite, force: true);
 ```
 
-* Example of update of GeoService with database file:
+* Example of usage of GeoService with data-file:
 ```csharp
 GeoUpdater.Update();
 var builder = new GeoServiceBuilder();
@@ -42,7 +42,7 @@ service.ResolveTimezone(ipAddress);
 Usage of Plarium.Geo.Embedded
 -------
 
-* Example of update of GeoService with embedded resources:
+* Example of usage of GeoService with embedded resources:
 ```csharp
 var builder = new GeoServiceBuilder();
 builder.RegisterResource<EmbeddedResourceReader>();
