@@ -11,11 +11,12 @@
         private readonly SortedList<uint, byte> _listIPv4;
         private readonly SortedList<ulong, byte> _listIPv6;
 
-        public MemoryGeoSource(string dbPath)
+        public MemoryGeoSource(IGeoResourceReader reader)
         {
-            _listIPv4 = new SortedList<uint, byte> (4000000);
-            _listIPv6 = new SortedList<ulong, byte>(1200000);
-            LoadToMemory(dbPath);
+            _listIPv4 = new SortedList<uint, byte>(250000);
+            _listIPv6 = new SortedList<ulong, byte>(21000);
+
+            LoadToMemory(reader);
         }
 
         public string GetCountry(IPAddress address)
@@ -24,7 +25,7 @@
 
             return CountryHelper.Default.GetCountryCode(countryByte);
         }
-        
+
         public string GetTimezone(IPAddress address)
         {
             var countryByte = address.IsIPv4() ? FindIPv4(address.GetIPv4()) : FindIPv6(address.GetIPv6());
@@ -33,11 +34,11 @@
             return TimezoneHelper.Default.GetUtcOffsetByCountry(country);
         }
 
-        private void LoadToMemory(string dbPath)
+        private void LoadToMemory(IGeoResourceReader resourceReader)
         {
             var ipv4Bytes = new byte[4];
             var ipv6Bytes = new byte[8];
-            using(var stream = File.Open(dbPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var stream = resourceReader.GetStream())
             using (var reader = new BinaryReader(stream))
             {
                 //check header for ipv6
@@ -175,6 +176,6 @@
             return _listIPv4.Values[index];
         }
 
-        
+
     }
 }

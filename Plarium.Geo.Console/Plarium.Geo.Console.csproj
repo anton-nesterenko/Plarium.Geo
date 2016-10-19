@@ -50,6 +50,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Plarium.Geo.Embedded\Plarium.Geo.Embedded.csproj">
+      <Project>{a8cce78f-a032-40b9-be7c-5c0c10cd8f50}</Project>
+      <Name>Plarium.Geo.Embedded</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Plarium.Geo\Plarium.Geo.csproj">
       <Project>{db521053-3856-42a9-b6ae-b02d71bfc5aa}</Project>
       <Name>Plarium.Geo</Name>

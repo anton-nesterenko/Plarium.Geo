@@ -1,11 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25402.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plarium.Geo", "Plarium.Geo\Plarium.Geo.csproj", "{DB521053-3856-42A9-B6AE-B02D71BFC5AA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plarium.Geo.Console", "Plarium.Geo.Console\Plarium.Geo.Console.csproj", "{BFBE9482-00C6-4A1D-AF8B-7A24A42EE5A9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{961E4B51-6AAF-4352-82ED-C45794C76A1F}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plarium.Geo.Embedded", "Plarium.Geo.Embedded\Plarium.Geo.Embedded.csproj", "{A8CCE78F-A032-40B9-BE7C-5C0C10CD8F50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plarium.Geo.Tests", "Plarium.Geo.Tests\Plarium.Geo.Tests.csproj", "{F80E6823-F38E-4F83-B067-E92663DD7F9C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +32,14 @@ Global
 		{BFBE9482-00C6-4A1D-AF8B-7A24A42EE5A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFBE9482-00C6-4A1D-AF8B-7A24A42EE5A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFBE9482-00C6-4A1D-AF8B-7A24A42EE5A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8CCE78F-A032-40B9-BE7C-5C0C10CD8F50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8CCE78F-A032-40B9-BE7C-5C0C10CD8F50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8CCE78F-A032-40B9-BE7C-5C0C10CD8F50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8CCE78F-A032-40B9-BE7C-5C0C10CD8F50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F80E6823-F38E-4F83-B067-E92663DD7F9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F80E6823-F38E-4F83-B067-E92663DD7F9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F80E6823-F38E-4F83-B067-E92663DD7F9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F80E6823-F38E-4F83-B067-E92663DD7F9C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

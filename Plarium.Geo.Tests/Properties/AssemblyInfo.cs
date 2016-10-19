@@ -1,18 +1,17 @@
-﻿using System.Resources;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Plarium.Geo")]
-[assembly: AssemblyDescription("Lightweight GeoIP service based on MaxMind GeoIP2 database")]
+[assembly: AssemblyTitle("Plarium.Geo.Tests")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Plarium")]
-[assembly: AssemblyProduct("Plarium.Geo")]
-[assembly: AssemblyCopyright("Copyright © Anton Nesterenko, 2016")]
-[assembly: AssemblyTrademark("Copyright © Plarium Global")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("Plarium.Geo.Tests")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -21,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("db521053-3856-42a9-b6ae-b02d71bfc5aa")]
+[assembly: Guid("f80e6823-f38e-4f83-b067-e92663dd7f9c")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -33,7 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.1.0.0")]
-[assembly: AssemblyFileVersion("2.1.0.0")]
-[assembly: NeutralResourcesLanguage("en")]
-
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
