@@ -1,4 +1,6 @@
-﻿namespace Plarium.Geo.Helpers
+﻿using System.Linq;
+
+namespace Plarium.Geo.Helpers
 {
     using System;
     using System.Net;
@@ -6,7 +8,7 @@
 
     public static class IPAddressTools
     {
-        public static ulong ToUInt64(byte[] addrBytes)
+         static ulong ToUInt64(byte[] addrBytes)
         {
             ulong ipnum = ulong.MinValue;
             if (BitConverter.IsLittleEndian)
@@ -29,7 +31,7 @@
             return ipnum;
         }
 
-        public static ulong ToUInt64(string ip)
+         static ulong ToUInt64(string ip)
         {
             ulong ipnum = ulong.MinValue;
             IPAddress address;
@@ -52,7 +54,8 @@
         public static ulong GetIPv6(this IPAddress ip)
         {
             //return (ulong)IPAddress.NetworkToHostOrder(BitConverter.ToInt64(ip.GetAddressBytes(), 0));
-            return ToUInt64(ip.GetAddressBytes());
+            //return ToUInt64(ip.GetAddressBytes());
+            return BitConverter.ToUInt64(ip.GetAddressBytes().Take(8).Reverse().ToArray(), 0);
         }
 
         public static bool IsIPv4(this IPAddress address)

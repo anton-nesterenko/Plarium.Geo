@@ -2,7 +2,7 @@
 {
     using System.Net;
 
-    public class WebHelper
+    internal class WebHelper
     {
         public static string GetModificationDate(string url, string dateFormat = "yyyyMMddHHmmss")
         {

@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Plarium.Geo, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Plarium.Geo.2.1.0.0\lib\net45\Plarium.Geo.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
@@ -49,13 +53,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Resources\geoip.bin" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Plarium.Geo\Plarium.Geo.csproj">
-      <Project>{db521053-3856-42a9-b6ae-b02d71bfc5aa}</Project>
-      <Name>Plarium.Geo</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

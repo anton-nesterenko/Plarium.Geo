@@ -85,16 +85,6 @@
 
         private byte FindIPv6(ulong value)
         {
-            int ndx = 0;
-            foreach (var b in _listIPv6)
-            {
-                ndx++;
-                if (b.Key >= value)
-                {
-                    return _listIPv6.Values[ndx];
-                }
-            }
-
             int lower = 0;
             int length = _listIPv6.Count;
             int upper = length - 1;

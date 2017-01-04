@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Text;
 using Plarium.Geo.Helpers;
 
 namespace Plarium.Geo.UpdateModule
@@ -24,7 +25,7 @@ namespace Plarium.Geo.UpdateModule
 
             UpdateIPv6();
 
-            var countries = new Dictionary<string, byte>(256);
+            var countries = new Dictionary<int, byte>(256);
             using (var reader = File.OpenText(TEMP_FILE_LOCATIONS))
             {
                 reader.ReadLine();
@@ -34,9 +35,10 @@ namespace Plarium.Geo.UpdateModule
                     if (!string.IsNullOrEmpty(line))
                     {
                         var values = line.Split(',');
-                        if (!countries.ContainsKey(values[0]))
+                        var key = Convert.ToInt32(values[0]);
+                        if (!countries.ContainsKey(key))
                         {
-                            countries.Add(values[0], CountryHelper.Default.CountryToByte(values[4]));
+                            countries.Add(key, CountryHelper.Default.CountryToByte(values[4]));
                         }
                     }
                 }
@@ -44,7 +46,7 @@ namespace Plarium.Geo.UpdateModule
                 reader.Close();
             }
 
-            var blocksIPv4 = new Dictionary<uint, string>(250000);
+            var blocksIPv4 = new Dictionary<uint, int>(240000);
             using (var reader = File.OpenText(TEMP_FILE_BLOCKSV4))
             {
                 uint ip;
@@ -56,13 +58,14 @@ namespace Plarium.Geo.UpdateModule
                     {
                         var values = line.Split(',');
                         var net = IPAddressTools.FromSubnetMask(values[0]);
-                        ip = (uint) IPAddressTools.ToUInt64(net.FirstUsable.GetAddressBytes());
+                        //ip = (uint) IPAddressTools.ToUInt64(net.FirstUsable.GetAddressBytes());
+                        ip = (uint)BitConverter.ToUInt32(net.FirstUsable.GetAddressBytes().Take(4).Reverse().ToArray(), 0);
                         if (!blocksIPv4.ContainsKey(ip))
                         {
                             var id = string.IsNullOrEmpty(values[1]) ? values[2] : values[1];
                             if (!string.IsNullOrEmpty(id))
                             {
-                                blocksIPv4.Add(ip, id);
+                                blocksIPv4.Add(ip, Convert.ToInt32(id));
                             }
                         }
                     }
@@ -71,7 +74,8 @@ namespace Plarium.Geo.UpdateModule
                 reader.Close();
             }
 
-            var blocksIPv6 = new Dictionary<ulong, byte>(40000);
+
+            var blocksIPv6 = new Dictionary<ulong, byte>(64000);
             using (var reader = File.OpenText(TEMP_FILE_BLOCKSV6))
             {
                 ulong ip;
@@ -101,9 +105,8 @@ namespace Plarium.Geo.UpdateModule
                 reader.Close();
             }
 
-
             //clear dublicates
-            byte sourcePrev = byte.MinValue;
+            /*byte sourcePrev = byte.MinValue;
             foreach (var source in blocksIPv6.OrderBy(x => x.Key))
             {
                 if (source.Value != sourcePrev)
@@ -114,7 +117,7 @@ namespace Plarium.Geo.UpdateModule
                 {
                     blocksIPv6.Remove(source.Key);
                 }
-            }
+            }*/
 
             var filenameIPv4 = "_" + dbFileName;
 
@@ -175,9 +178,9 @@ namespace Plarium.Geo.UpdateModule
 
             File.Move(filenameIPv4, dbFileName);
 
-            File.Delete(TEMP_FILE_BLOCKSV4);
-            File.Delete(TEMP_FILE_BLOCKSV6);
-            File.Delete(TEMP_FILE_LOCATIONS);
+            //File.Delete(TEMP_FILE_BLOCKSV4);
+            //File.Delete(TEMP_FILE_BLOCKSV6);
+            //File.Delete(TEMP_FILE_LOCATIONS);
         }
 
         private void UpdateIPv6()
@@ -187,13 +190,11 @@ namespace Plarium.Geo.UpdateModule
 
             WebHelper.Download(url, tempFile);
 
-            using (FileStream fInStream = new FileStream(tempFile, FileMode.Open, FileAccess.Read))
+            using (var fInStream = new FileStream(tempFile, FileMode.Open, FileAccess.Read))
             {
-                using (GZipStream zipStream = new GZipStream(fInStream, CompressionMode.Decompress))
+                using (var zipStream = new GZipStream(fInStream, CompressionMode.Decompress))
                 {
-                    using (
-                        FileStream fOutStream = new FileStream(TEMP_FILE_BLOCKSV6, FileMode.OpenOrCreate,
-                            FileAccess.Write))
+                    using (var fOutStream = new FileStream(TEMP_FILE_BLOCKSV6, FileMode.OpenOrCreate, FileAccess.Write))
                     {
                         byte[] tempBytes = new byte[4096];
                         int i;

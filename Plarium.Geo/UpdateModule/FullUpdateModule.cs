@@ -38,7 +38,7 @@ namespace Plarium.Geo.UpdateModule
             };
 
             var blocksIPv4 = new Dictionary<uint, string>(4000000);
-            using (var reader = File.OpenText(TEMP_FILE_BLOCKSV4))
+            /*using (var reader = File.OpenText(TEMP_FILE_BLOCKSV4))
             {
                 uint ip;
                 reader.ReadLine();
@@ -62,11 +62,11 @@ namespace Plarium.Geo.UpdateModule
                 }
 
                 reader.Close();
-            };
+            };*/
 
             //var list = new List<string>(1500000);
             var blocksIPv6 = new Dictionary<ulong, string>(1500000);
-            using (var reader = File.OpenText(TEMP_FILE_BLOCKSV6))
+            /*using (var reader = File.OpenText(TEMP_FILE_BLOCKSV6))
             {
                 ulong ip;
                 reader.ReadLine();
@@ -84,11 +84,7 @@ namespace Plarium.Geo.UpdateModule
                             if (!string.IsNullOrEmpty(id))
                             {
                                 blocksIPv6.Add(ip, id);
-                                /*
-                                var iplast = IPAddressTools.ToUInt64(net.LastUsable.GetAddressBytes());
-                                var loc = CountryHelper.Default.GetCountryCode(cities[id]);
-                                var usable = iplast - ip;
-                                list.Add($"{ip},{iplast},{usable},{loc}");*/
+                                
                             }
                         }
                     }
@@ -96,6 +92,7 @@ namespace Plarium.Geo.UpdateModule
 
                 reader.Close();
             };
+    */
 
             //File.WriteAllLines("_ipv6debug.bin", list);
             //list.Clear();
